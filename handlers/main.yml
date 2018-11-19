@@ -7,3 +7,7 @@
   service:
     name: systemd-logind
     state: restarted
+
+
+- name: reload sysctl
+  shell: /sbin/sysctl -p

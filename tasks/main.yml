@@ -21,6 +21,28 @@
     - restart systemd-logind
 
 
+- name: Update sysctl.conf
+  template:
+    src: "{{ role_path }}/templates/sysctl.conf"
+    dest: "/etc/sysctl.d/50-gpdb-sysctl.conf"
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - reload sysctl
+
+
+- name: Update limits
+  template:
+    src: "{{ role_path }}/templates/limits.conf"
+    dest: "/etc/security/limits.d/50-gpdb-limits.conf"
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - reload sysctl
+
+
 - name: Install GPDB Buildclient
   become: no
   shell: cd /home/{{ ansible_ssh_user }} && git clone https://github.com/andreasscherbaum/buildfarm-client.git buildclient
