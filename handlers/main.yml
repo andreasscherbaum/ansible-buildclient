@@ -1,0 +1,9 @@
+---
+
+# handlers are always executed in the order in which they are written in the handlers list/file
+
+
+- name: restart systemd-logind
+  service:
+    name: systemd-logind
+    state: restarted

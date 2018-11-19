@@ -1,6 +1,25 @@
 ---
 
 
+- name: check if /etc/systemd/logind.conf exists
+  stat: path=/etc/systemd/logind.conf
+  register: logind_conf_exists
+
+
+# http://gpdb.docs.pivotal.io/5130/install_guide/prep_os_install_gpdb.html
+- name: remove IPC from /etc/systemd/logind.conf
+  lineinfile:
+    dest: /etc/systemd/logind.conf
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    state: "{{ item.state }}"
+  with_items:
+    - { regexp: '^#RemoveIPC', line: 'RemoveIPC=no', state: present }
+  when: logind_conf_exists.stat.exists == True
+  notify:
+    - restart systemd-logind
+
+
 - name: Install GPDB Buildclient
   become: no
   shell: cd /home/{{ ansible_ssh_user }} && git clone https://github.com/andreasscherbaum/buildfarm-client.git buildclient
